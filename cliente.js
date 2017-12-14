@@ -39,15 +39,23 @@ class Cliente {
             headers: this.procesarHeaders()
         };
 
-        this.request(opciones, callback);
+        this.request(opciones, null, callback);
     }
 
-    post(uri, data){
-
+    post(uri, data, callback){
+        var opciones = {
+                hostname: this.host,
+                port: this.puerto,
+                method: 'POST',
+                path: this.protocolo + "://" + this.host + uri, // https://api.github.com/jorgevgut
+                headers: this.procesarHeaders()            
+        }
+        
+        this.request(opciones, callback);        
     }
 
     // REQUEST (MANEJO DE PETICIONES)
-    request(opciones, callback){
+    request(opciones, data, callback){
         // HTTP O HTTPS
         var http = require(this.protocolo); 
         var respuesta = {
@@ -65,6 +73,11 @@ class Cliente {
                 callback(respuesta);
             });
         });
+
+        if (data != undefined && data != null){
+            peticion.write(JSON.stringify(data));
+        }
+
         peticion.end();
     }
 
